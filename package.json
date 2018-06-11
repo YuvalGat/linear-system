@@ -1,0 +1,46 @@
+{
+  "name": "linear-system",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-scripts": "1.1.4",
+    "react-tex": "^1.4.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "xo": {
+    "envs": [
+      "node",
+      "browser"
+    ],
+    "extends": [
+      "xo-react"
+    ],
+    "rules": {
+      "react/prop-types": 0,
+      "unicorn/filename-case": 0,
+      "import/no-unassigned-import": 1,
+      "react/jsx-tag-spacing": [
+        "error",
+        {
+          "beforeSelfClosing": "always"
+        }
+      ],
+      "quotes": [
+        "error",
+        "single"
+      ]
+    }
+  },
+  "devDependencies": {
+    "eslint-config-xo-react": "^0.16.0",
+    "eslint-plugin-react": "^7.7.0",
+    "xo": "^0.21.0"
+  }
+}
