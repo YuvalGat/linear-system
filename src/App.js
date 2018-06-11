@@ -2,16 +2,35 @@ import React, {Component} from 'react';
 import {Tex} from 'react-tex';
 import './App.css';
 
+const math = require('mathjs');
+
 class App extends Component {
 	render() {
-		const n = 3;
+		const n = 2;
 		const solutions = generateSolutionSet(n);
-		const latex = generateLaTeX(generateCoefficientMatrix(n), solutions);
-		console.log(latex);
+		const coefficients = generateCoefficientMatrix(n);
+		const latex = generateLaTeX(coefficients, solutions);
+
+		console.log(coefficients, solutions, calculateConstantsVector(coefficients, solutions));
+
+		const xvec = String.raw`\left(${[...new Array(n).keys()].map(n => `x_${n}`).join(', ')}\right)`;
+
+		console.log(xvec);
 		return (
 			<div>
+				<p>Solve the following system of linear equations:</p>
 				<Tex texContent={latex} />
-				<p>{solutions.join(', ')}</p>
+				<p>Enter your solutions (comma-separated):</p>
+				<Tex texContent={`${xvec}=(`} /><input type="text" id="userSolutions" /><Tex texContent=")" />
+				<button type="submit" onClick={() => {
+					const userSolution = document.getElementById('userSolutions').value.split(',').map(c => parseInt(c));
+
+					if (userSolution.join(',') === solutions.join(',')) {
+						alert('Good job! That seems about right.');
+					} else {
+						alert('Oops. That doesn\'t seem right; re-check your work and try again.');
+					}
+				}}>Check my work!</button>
 			</div>
 		);
 	}
@@ -37,18 +56,7 @@ function randomElementFromArray(arr) {
 }
 
 function calculateConstantsVector(coefficientMatrix, solutionSet) {
-	const constantsVector = [];
-
-	coefficientMatrix.forEach((row, index) => {
-		let sum = 0;
-		row.forEach(coefficient => {
-			sum += coefficient * solutionSet[index];
-		});
-
-		constantsVector.push(sum);
-	});
-
-	return constantsVector;
+	return math.multiply(coefficientMatrix, solutionSet);
 }
 
 function generateLaTeX(coefficientMatrix, solutionSet) {
@@ -66,7 +74,7 @@ function generateLaTeX(coefficientMatrix, solutionSet) {
 
 		equation = equation.slice(0, -1);
 		equation = equation.replace(/\+-/g, '-');
-		equation += `&=${solutionSet[equationIndex]}`;
+		equation += `&=${constantsVector[equationIndex]}`;
 
 		equation += String.raw`\\`;
 
@@ -77,9 +85,5 @@ function generateLaTeX(coefficientMatrix, solutionSet) {
 
 	return latex;
 }
-
-// const A = generateCoefficientMatrix(3);
-// const x = generateSolutionSet(3);
-// const b = calculateConstantsVector(A, x);
 
 export default App;
