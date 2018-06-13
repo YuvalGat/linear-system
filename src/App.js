@@ -1,21 +1,25 @@
 import React, {Component} from 'react';
+import Slider, {Range} from 'rc-slider';
 import {Tex} from 'react-tex';
 import './App.css';
+import 'rc-slider/assets/index.css';
 
 const math = require('mathjs');
 
 class App extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {n: 10};
+	}
+
 	render() {
-		const n = 2;
+		const n = this.state.n;
 		const solutions = generateSolutionSet(n);
 		const coefficients = generateCoefficientMatrix(n);
 		const latex = generateLaTeX(coefficients, solutions);
 
-		console.log(coefficients, solutions, calculateConstantsVector(coefficients, solutions));
-
 		const xvec = String.raw`\left(${[...new Array(n).keys()].map(n => `x_${n}`).join(', ')}\right)`;
 
-		console.log(xvec);
 		return (
 			<div>
 				<p>Solve the following system of linear equations:</p>
@@ -30,9 +34,18 @@ class App extends Component {
 					} else {
 						alert('Oops. That doesn\'t seem right; re-check your work and try again.');
 					}
-				}}>Check my work!</button>
+				}}
+				>Check my work!
+				</button>
+				<br />
+				<p>Number of equations: </p>
+				<Slider min={2} max={10} step={1} onChange={this.changeNumber.bind(this)} />
 			</div>
 		);
+	}
+
+	changeNumber(value) {
+		this.setState({n: value});
 	}
 }
 
@@ -67,9 +80,9 @@ function generateLaTeX(coefficientMatrix, solutionSet) {
 	coefficientMatrix.forEach((row, equationIndex) => {
 		let equation = '';
 		row.forEach((coefficient, coefficientIndex) => {
-			let term = `${coefficient}x_${coefficientIndex}+`;
+			const term = `${coefficient}x_{${coefficientIndex}}+`;
 
-			equation += coefficient !== 0 ? term : '';
+			equation += (coefficient === 0) ? '' : term;
 		});
 
 		equation = equation.slice(0, -1);
